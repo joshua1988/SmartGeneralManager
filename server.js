@@ -5,6 +5,7 @@ var mongojs = require('mongojs');
 var db = mongojs('members', ['members']);
 var fooddb = mongojs('foodmenu', ['foodmenu']);
 var datedb = mongojs('gatheringdate',['gatheringdate']);
+var techsupportdb = mongojs('techsupport', ['contents']);  // mongojs('db name', ['collection name']);
 
 var bodyParser = require('body-parser');
 
@@ -83,10 +84,10 @@ app.get('/foodmenu', function(req, res) {
   });
 });
 
-app.put('/foodmenu/', function(req, res) {
+app.post('/foodmenu/', function(req, res) {
   console.log(req.body);
-  fooddb.foodmenu.update(req.body, function(err, docs) {
-    res.json(docs);
+  fooddb.foodmenu.insert(req.body, function(err, docs) {
+    res.json("post mehthod sucess : ",docs);
   });
 });
 
@@ -108,6 +109,55 @@ app.delete('/foodmenu/', function(req, res) {
   fooddb.foodmenu.remove(function (err,docs) {
       res.json(docs);
   });
+});
+
+// tech support service
+app.post('/techsupport', function(req, res) {
+  console.log(req.body);
+  techsupportdb.contents.insert(req.body, function(err, docs) {
+    res.json(docs);
+  });
+});
+
+app.get('/techsupport', function(req, res) {
+  console.log("I received a GET request from supports");
+  techsupportdb.contents.find(req.body, function(err, docs) {
+    res.json(docs);
+  });
+});
+
+app.put('/techsupport/', function(req, res) {
+
+	var id = { _id: db.ObjectId(req.body.support_id) };
+
+   console.log("DBid DELETE server.js : " , id);
+
+	 techsupportdb.contents.remove( id, function(err, docs){
+        if(err){
+            console.log("Error to remove" + err);
+        }
+        else{
+            console.log("Removed");
+        }
+        res.json(docs);
+    });
+});
+
+app.put('/techsupport/update', function(req, res) {
+
+	var id = {_id: db.ObjectId(req.body.support_id) } ;
+
+	console.log("DBid UPDATE server.js : " , id, req.body);
+
+    techsupportdb.contents.update( id, req.body, function(err, docs){
+        if(err){
+            console.log("Error to update" + err);
+        }
+        else{
+            console.log("Updated " , id);
+        }
+        res.json(docs);
+    });
 });
 
 app.listen(3000);

@@ -3,35 +3,53 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport"
-	     content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height" />
-
-  <!-- Latest compiled and minified CSS -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-
-  <!-- Optional theme -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
-
-  <!-- Angular DatePicker -->
+  content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height" />
+  <link rel="stylesheet" href="css/bootstrap/bootstrap.css">
+  <link rel="stylesheet" href="css/bootstrap/bootstrap-theme.min.css">
+  <link rel="stylesheet" href="css/custom/customized.css">
+  <link href='http://fonts.googleapis.com/css?family=PT+Sans' rel='stylesheet' type='text/css'>
 
   <!-- jQuery Date Picker -->
   <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
   <script src="//code.jquery.com/jquery-1.10.2.js"></script>
   <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+  <!-- DataTable Boostrap -->
+  <link rel="stylesheet" href="css/datatable/dataTables.bootstrap.min.css">
   <script>
   $(function() {
+    $( document.body ).on( 'click', '.dropdown-menu li', function( event ) {
+      var $target = $( event.currentTarget );
+      $target.closest( '.btn-group' )
+      .find( '[data-bind="label"]' ).text( $target.text() )
+      .end()
+      .children( '.dropdown-toggle' ).dropdown( 'toggle' );
+      return false;
+    });
+
     $( "#datepicker" ).datepicker({
       onSelect: function(dateStr){
         var date = $(this).datepicker('getDate');
         var thedate = $.datepicker.formatDate("yy-mm-dd", $(this).datepicker('getDate'));
 
-
-
         console.log("current date : ",date);
         console.log("current date : ",thedate);
       }
     });
-    // $( "#datepicker" ).datepicker( "setDate", "09/17/2015" );
 
+    // popover initialization
+    $('[data-toggle="popover"]').popover()
+
+    // DataTable
+    // var table = $('#example').DataTable();
+
+    // table.on( 'click', function(e) {
+    //   console.log("event", e.target);
+    //
+    //   // popover 접근 법 찾기
+    //   // $("#"+e.target.id).popover();
+    // });
+
+    $('#example').DataTable();
   });
   </script>
 
@@ -44,169 +62,453 @@
   <title>SW Platform Survey System "편해라 총무"</title>
 </head>
 <body>
-  <div class="container" data-ng-controller="AppCtrl">
-		<div class="header clearfix">
-			<nav>
-				<ul class="nav nav-pills pull-right" role="tablist">
-          <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">참석 현황</a></li>
-          <li role="presentation"><a href="#menuvote" aria-controls="menuvote" role="tab" data-toggle="tab">메뉴 투표</a></li>
-          <li role="presentation"><a href="#teamchat" aria-controls="teamchat" role="tab" data-toggle="tab">팀 수다</a></li>
-          <li role="presentation"><a href="#notice" aria-controls="notice" role="tab" data-toggle="tab" ng-click="updateMyChartData()">공지 사항</a></li>
-				</ul>
-			</nav>
-			<h3 class="text-muted">Real-time Survey System "편해라 총무"</h3>
-		</div>
+  <!-- Modal -->
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+        </div>
+        <div class="modal-body">
+          ...
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    <!-- 1st page -->
-		<div class="jumbotron">
-			<h2>SW플랫폼 연구팀 실시간 조사</h2>
-			<p class="lead">
-				맛있는거 먹을 시간입니다.
-        <div class="row">
-          <div class="col-md-6">
-            <p>날짜 :&nbsp;<input type="text" ng-model="datePicker" datepicker />
+  <div class="header clearfix">
+    <div class="row">
+      <div class="col-md-4 col-md-offset-5">
+        <h3 class="text-muted">SOS 시스템 (Save OurSelves)</h3>
+      </div>
+    </div>
+    <nav>
+      <ul class="nav nav-pills justified" role="tablist">
+        <li role="presentation"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">참석 현황</a></li>
+        <li role="presentation"><a href="#menuvote" aria-controls="menuvote" role="tab" data-toggle="tab">메뉴 투표</a></li>
+        <li role="presentation" class="active"><a href="#techsupport" aria-controls="techsupport" role="tab" data-toggle="tab">기술지원내역</a></li>
+        <li role="presentation"><a href="#teamchat" aria-controls="teamchat" role="tab" data-toggle="tab">팀 수다</a></li>
+        <li role="presentation"><a href="#notice" aria-controls="notice" role="tab" data-toggle="tab" ng-click="updateMyChartData()">공지 사항</a></li>
+      </ul>
+    </nav>
+  </div>
+  <div class="container">
+    <div class="tab-content">
+      <!-- 0 page -->
+      <div role="tabpanel" class="tab-pane active" id="techsupport" data-ng-controller="WhopperCtrl as wc">
+        <div class="panel panel-primary">
+          <div class="panel-heading">
+            <h3 class="panel-title">기술지원내역</h3>
           </div>
-          <div class="col-md-6">
-            <div class="input-group">
-              <span class="input-group-addon" id="sizing-addon2">시간</span>
-              <input type="text" class="form-control" placeholder="시간을 입력합니다" aria-describedby="sizing-addon2" value="19:00 장가네전골(야탑역 근처)">
-            </div>
-          </div>
-        </div>
-			</p>
-		</div>
+          <div class="panel-body" style="height:600px; overflow-y: scroll;" id="chatSpace">
+            <form class="form-inline"><input type=hidden id="support_id">
+              <div class="form-group">
+                접수일자 : <input type="text" id="support_startdate" ng-model="formData.support_startdate" datepicker style="width:75px;"/>
+                요청기한 : <input type="text" id="support_duedate" ng-model="formData.support_duedate" datepicker style="width:75px;"/>
+                요청자 : <input type="text" id="questioner" ng-model="formData.questioner" />
 
-		<div class="tab-content">
-      <div role="tabpanel" class="tab-pane active" id="home">
-        <div class="panel panel-primary">
-          <div class="panel-heading">
-            <h3 class="panel-title">참석자 조사</h3>
-          </div>
-          <div class="panel-body">
-            <table class="table table-bordered">
-    					<tr class="info">
-    						<td>
-    						이름
-    						</td>
-    						<td>
-    						참석여부
-    						</td>
-    					</tr>
-    					<tr data-ng-repeat="mem in members" data-ng-if="mem.selected != undefined">
-    						<td class="success">
-    						{{mem.name}}
-    						</td>
-    						<td>
-    							<input type="checkbox" data-ng-model="mem.selected">
-    						</td>
-    					</tr>
-    				</table>
-          </div>
-          <div class="panel-footer panel-primary">
-            <button class="btn btn-primary" type="button">
-      			  참석: <span class="badge">{{ selectedMembers }}</span>
-      			</button>
-      		  <button class="btn btn-danger" type="button">
-      			  불참석: <span class="badge">{{ unselectedMembers }}</span>
-      			</button>
-      			<span style="float:right">
-      				<button class="btn btn-info" data-ng-click="save()">저장</button>
-      				<button class="btn btn-info" data-ng-click="clear()">리셋</button>
-      			</span>
-          </div>
-        </div>
-      </div>
-      <!-- 2nd page -->
-      <div role="tabpanel" class="tab-pane" id="menuvote">
-        <div class="panel panel-primary">
-          <div class="panel-heading">
-            <h3 class="panel-title">회식 메뉴 선택</h3>
-          </div>
-          <div class="panel-body">
-            <form class="form-inline">
-              <input type="text" ng-model="foodname" ng-enter="addFoodMenu()"
-              class="form-control" id="foodmenu" placeholder="원하는 메뉴를 입력해주세요" style="width:40%">
-              <button type="button" class="btn btn-success" ng-click="addFoodMenu()">추가</button>
-            </form>
-            <div id="menulist">
-              <div ng-repeat="field in fields">
-                <food-display></food-display>
+                <!-- 상태 선택 dropdown -->
+                <div class="btn-group">
+                  <button type="button" class="btn btn-default dropdown-toggle form-control" data-toggle="dropdown">
+                    <span data-bind="label" id="status">상태</span>&nbsp;<span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu" role="menu">
+                    <li><a href="#">접수</a></li>
+                    <li><a href="#">진행</a></li>
+                    <li><a href="#">보류</a></li>
+                    <li><a href="#">지연</a></li>
+                    <li><a href="#">완료</a></li>
+                  </ul>
+                </div>
+                <!-- 프로젝트 선택 dropdown -->
+                <div class="btn-group">
+                  <button type="button" class="btn btn-default dropdown-toggle form-control" data-toggle="dropdown">
+                    <span data-bind="label" id="project_type">프로젝트</span>&nbsp;<span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu" role="menu">
+                    <!-- Glue project -->
+                    <li><a href="#">SmartFactory기술지원[15SH1172]</a></li>
+                    <li><a href="#">탄소강 표준모델 개발[14SH1460]</a></li>
+                    <li><a href="#">탄소강 표준모델 지원[15SH0956] </a></li>
+                    <li><a href="#">Client통합관리[15SH1152]('15.9.1~'16.4.15)</a></li>
+                    <li><a href="#">포스코-16SLA솔루션정비[16SH0312]</a></li>
+                    <li><a href="#">(주)포스코켐텍(켐텍 경영정보 인프라[11GP1422])</a></li>
+                    <li><a href="#">PNR(~'16.10)(PNR IT Infra 구축[14GH0914])</a></li>
+                    <li><a href="#">포스코경영연구소((주)포스코경영연구소 2013년 GSB[13GR0896])</a></li>
+                    <li><a href="#">포스코그린가스텍(~'16.07)(포스코GGT 정보시스템 구축[14GB0641])</a></li>
+                    <li><a href="#">포스코터미널(~'16.06)(포스코터미널 기지관리 시스템[14GC0902])</a></li>
+                    <li><a href="#">포스코특수강㈜(POSCO SS-Vina 정보화구축[12GH0753])</a></li>
+                    <li><a href="#">포스코특수강㈜(특수강 e-Pro 구축[11GH0467])</a></li>
+                    <li><a href="#">16인창원 모바일 캠퍼스[16GG0498]</a></li>
+                    <li><a href="#">광명산단(광명산단선재임대창고[14NH1368])</a></li>
+                    <li><a href="#">대우조선해양(대우조선해양 POWIS [12NP1355])</a></li>
+                    <li><a href="#">대한제강/현대BS&C(대한제강MES구축 [2009061701])</a></li>
+                    <li><a href="#">대한제강/현대BS&C(엔솔테크놀러지 대한제강 Glue 납품[13NH0324])</a></li>
+                    <li><a href="#">디케이유엔씨㈜(유니온스틸 MES[D0NP0269])</a></li>
+                    <li><a href="#">아모레퍼시픽(아모레퍼시픽 생산관리 고도화[14NP1185])</a></li>
+                    <li><a href="#">아모레퍼시픽(퍼시픽패키지 MES[12NP0182])</a></li>
+                    <li><a href="#">화승R&A시스템구축(14NG1065)</a></li>
+                    <li><a href="#">웨어러블 미래부 과제[15ER0988] </a></li>
+                    <li><a href="#">삼일통합물류시스템(삼일운수,~'16.7,[15NC0467])</a></li>
+                    <li><a href="#">ICBM연구과제[16DR0425]</a></li>
+                    <li><a href="#">자사</a></li>
+                    <!-- u-CUBE project -->
+                    <li><a href="#">SmartFactory기술지원[15SH1172]</a></li>
+                    <li><a href="#">포스코서버효율화 [15SH0469] - 5차서버 리프레쉬</a></li>
+                    <li><a href="#">포스코-16SLA솔루션정비[16SH0312]</a></li>
+                    <li><a href="#">16년 포스코에너지 u-CUBE 유지보수 </a></li>
+                    <li><a href="#">16년 포스코캠텍 u-CUBE 유지보수</a></li>
+                    <li><a href="#">16년 포스코엔지니어링 u-CUBE 유지보수</a></li>
+                    <li><a href="#">16년 Entob u-CUBE 유지보수</a></li>
+                    <li><a href="#">16년 포스코특수강 u-CUBE 유지보수</a></li>
+                    <li><a href="#">광명산단(광명산단선재임대창고[14NH1368])</a></li>
+                    <li><a href="#">16년 한국타이어 u-CUBE 유지보수</a></li>
+                    <li><a href="#">브라질CSP IT구축[11FH0370]</a></li>
+                    <li><a href="#">16년 코리아 e-플랫폼 u-CUBE 유지보수</a></li>
+                    <li><a href="#">(주)화승알앤에이(화승R&A시스템구축[14NG1065])</a></li>
+                    <li><a href="#">자사</a></li>
+                    <!-- PosBee project -->
+                    <li><a href="#">무인계량 유지보수</a></li>
+                    <li><a href="#">출입보안 유지보수</a></li>
+                    <li><a href="#">제품검수 유지보수</a></li>
+                    <li><a href="#">자사</a></li>
+                  </ul>
+                </div>
+                <!-- 분야 선택 -->
+                <div class="btn-group">
+                  <button type="button" class="btn btn-default dropdown-toggle form-control" data-toggle="dropdown">
+                    <span data-bind="label" id="project_target">분야</span>&nbsp;<span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu" role="menu">
+                    <li><a href="#">포스코</a></li>
+                    <li><a href="#">대내</a></li>
+                    <li><a href="#">대외</a></li>
+                  </ul>
+                </div>
+                <!-- 솔루션 선택 dropdown -->
+                <div class="btn-group">
+                  <button type="button" class="btn btn-default dropdown-toggle form-control" data-toggle="dropdown">
+                    <span data-bind="label" id="solution_type">솔루션</span>&nbsp;<span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu" role="menu">
+                    <!-- u-CUBE solution -->
+                    <li><a href="#">u-CUBE4.3</a></li>
+                    <li><a href="#">u-CUBE4.2</a></li>
+                    <li><a href="#">u-CUBE ENG</a></li>
+                    <li><a href="#">u-CUBE3.1</a></li>
+                    <li><a href="#">u-CUBE Entob</a></li>
+                    <li><a href="#">u-CUBE2.x</a></li>
+                    <li><a href="#">u-CUBES ESB</a></li>
+                    <li><a href="#">기타</a></li>
+                    <!-- Glue solution -->
+                    <li><a href="#">Glue F/W 4</a></li>
+                    <li><a href="#">Glue F/W 3 이하</a></li>
+                    <li><a href="#">Glue Master 2</a></li>
+                    <li><a href="#">Glue Master 1</a></li>
+                    <li><a href="#">Glue Security 3</a></li>
+                    <li><a href="#">Glue Security 2</a></li>
+                    <li><a href="#">Glue Mobile 1</a></li>
+                    <li><a href="#">Glue for POSCOSF</a></li>
+                    <li><a href="#">Glue for BPC</a></li>
+                    <li><a href="#">기타</a></li>
+                    <!-- PosBee solution -->
+                    <li><a href="#">PosBee 3.x</a></li>
+                    <li><a href="#">PosBee 4.x</a></li>
+                    <li><a href="#">기타</a></li>
+                  </ul>
+                </div>
+                <!-- 담당자 선택 dropdown -->
+                <div class="btn-group">
+                  <button type="button" class="btn btn-default dropdown-toggle form-control" data-toggle="dropdown">
+                    <span data-bind="label" id="gluepd">담당자</span>&nbsp;<span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu" role="menu">
+                    <!-- u-CUBE member -->
+                    <li><a href="#">허두녕</a></li>
+                    <li><a href="#">이충렬</a></li>
+                    <li><a href="#">장한민</a></li>
+                    <li><a href="#">오은록</a></li>
+                    <li><a href="#">장한민</a></li>
+                    <!-- Glue member -->
+                    <li><a href="#">강길섭</a></li>
+                    <li><a href="#">배광식</a></li>
+                    <li><a href="#">신경숙</a></li>
+                    <li><a href="#">장기효</a></li>
+                    <li><a href="#">조창희</a></li>
+                    <li><a href="#">황유진</a></li>
+                    <!-- PosBee member -->
+                    <li><a href="#">김정우</a></li>
+                    <li><a href="#">신경숙</a></li>
+                    <li><a href="#">이대한</a></li>
+                  </ul>
+                </div>
+                <!-- SOP(지원종류) 선택 dropdown -->
+                <div class="btn-group">
+                  <button type="button" class="btn btn-default dropdown-toggle form-control" data-toggle="dropdown">
+                    <span data-bind="label" id="sop">지원종류</span>&nbsp;<span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu" role="menu">
+                    <li><a href="#">SW솔루션 교육</a></li>
+                    <li><a href="#">SW솔루션 기술문의대응</a></li>
+                    <li><a href="#">SW솔루션 수주 제안 지원</a></li>
+                    <li><a href="#">SW솔루션 업그레이드</a></li>
+                    <li><a href="#">SW솔루션 장애대응</a></li>
+                    <li><a href="#">SW솔루션 정기점검</a></li>
+                    <li><a href="#">SW솔루션 패치</a></li>
+                    <li><a href="#">SW솔루션 시스템 Refresh 대응</a></li>
+                    <li><a href="#">PosBee제품적용</a></li>
+                    <li><a href="#">u-CUBE제품적용</a></li>
+                    <li><a href="#">솔루션 supervising</a></li>
+                  </ul>
+                </div>
+                <!-- 난이도 선택 dropdown -->
+                <div class="btn-group">
+                  <button type="button" class="btn btn-default dropdown-toggle form-control" data-toggle="dropdown">
+                    <span data-bind="label" id="content_level">내용난이도</span>&nbsp;<span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu" role="menu">
+                    <li><a href="#">하</a></li>
+                    <li><a href="#">중</a></li>
+                    <li><a href="#">상</a></li>
+                  </ul>
+                </div>
               </div>
-            </div>
-          </div>
-          <div class="panel-footer panel-primary" align="right">
-            <button class="btn btn-info " data-ng-click="saveList()">저장</button>
-            <!-- <button class="btn btn-danger " data-ng-click="resetList()" disabled="disabled">리셋</button> -->
-            <button class="btn btn-danger " data-ng-click="resetList()">리셋</button>
-          </div>
-        </div>
-      </div>
-      <!-- 3rd page -->
-      <div role="tabpanel" class="tab-pane" id="teamchat">
-        <div class="panel panel-primary">
-          <div class="panel-heading">
-            <h3 class="panel-title">팀 수다공간</h3>
-          </div>
-          <div class="panel-body" style="height:600px" id="chatSpace">
-            <div ng-repeat="chatcontent in chatcontents">
-              <div class="well">{{chatcontent.user}} : {{chatcontent.content}}
-              &nbsp&nbsp&nbsp
-                <button type="button" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>&nbsp Edit &nbsp</button>
-                <button type="button" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>&nbsp Reply</button>
-                <button type="button" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>&nbsp Delete</button>
-              </div>
-            </div>
-            <!-- <div ng-repeat="chatcontent in chatcontents">
-              <chat-log></chat-log>
-            </div> -->
-          </div>
-          <div class="panel-footer panel-primary" align="left">
-            <form class="form-inline">
-              <input type="text" class="form-control" ng-model="chatInput" placeholder="할 말을 입력하세요"  ng-enter="typeChatting()" style="width:80%">
-              <button type="button" class="btn btn-success" ng-click="typeChatting()">입력</button>
+
+              <input type="text" style="width:80%;" class="form-control" id="support_content" placeholder="지원 내용을 입력하세요">
+              <button ng-click="supportSubmit(record)"  id="supportSubmit" class="btn btn-success">입력</button>
+              <button ng-click="supportUpdate(record)" id="supportUpdate" class="btn btn-primary">수정</button>
+              <button ng-click="supportDelete(record)" class="btn btn-danger" data-toggle="popover" title="내역 삭제" data-content="And here's some amazing content. It's very engaging. Right?">삭제</button>
+              <!-- button ng-click="supportSearch(record)" id="supportSearch" class="btn btn-primary">검색</button -->
+
             </form>
+            <hr style="height:1px;border:none;color:gray;background-color:gray;">
+            <!-- dataTables CR-->
+            <table id="example" class="table table-striped table-bordered" cellspacing="0" width="100%">
+              <thead>
+                <tr>
+                  <th ng-show="false">id</th>
+                  <th>접수일자</th>
+                  <th>요청기한</th>
+                  <th>요청자</th>
+                  <th>상태</th>
+                  <th>프로젝트</th>
+                  <th>분야</th>
+                  <th>솔루션</th>
+                  <th>담당자</th>
+                  <th>지원종류</th>
+                  <th>난이도</th>
+                  <th>내용</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng:repeat="support in supportContentList | orderBy: '-support_duedate'" ng-click="setSelected();">
+                  <td ng-bind="support._id" ng-show="false"></td>
+                  <td ng-bind="support.support_startdate" data-toggle="modal" data-target="#myModal"></td>
+                  <td ng-bind="support.support_duedate"></td>
+                  <td ng-bind="support.questioner"></td>
+                  <td ng-bind="support.status"></td>
+                  <td ng-bind="support.project_type"></td>
+                  <td ng-bind="support.project_target"></td>
+                  <td ng-bind="support.solution_type"></td>
+                  <td ng-bind="support.gluepd"></td>
+                  <td ng-bind="support.sop"></td>
+                  <td ng-bind="support.content_level"></td>
+                  <td ng-bind="support.support_content"></td>
+                </tr>
+              </tbody>
+            </table>
+              <!-- <table datatable="" dt-options="wc.dtOptions" class="row-border hover">
+                <thead>
+                  <tr>
+                    <th>접수일자</th>
+                    <th>요청기한</th>
+                    <th>요청자</th>
+                    <th>상태</th>
+                    <th>프로젝트</th>
+                    <th>분야</th>
+                    <th>솔루션</th>
+                    <th>담당자</th>
+                    <th>지원종류</th>
+                    <th>난이도</th>
+                    <th>내용</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr ng-repeat="support in wc.supportContentList">
+                    <td>{{support.support_startdate}}</td>
+                    <td>{{support.support_duedate}}</td>
+                    <td>{{support.questioner}}</td>
+                    <td>{{support.status}}</td>
+                    <td>{{support.project_type}}</td>
+                    <td>{{support.project_target}}</td>
+                    <td>{{support.solution_type}}</td>
+                    <td>{{support.gluepd}}</td>
+                    <td>{{support.sop}}</td>
+                    <td>{{support.content_level}}</td>
+                    <td>{{support.support_content}}</td>
+                  </tr>
+                </tbody>
+            </table> -->
           </div>
         </div>
       </div>
-      <!-- 4rd page -->
-      <div role="tabpanel" class="tab-pane" id="notice" >
-        <!-- 4 페이지
-        (1) Outline -> 1페이지 참석현황 그래프로 표시
-                       2페이지 인기메뉴 그래프로 표시 -->
-        <div class="panel panel-primary">
-          <div class="panel-heading">
-            <h3 class="panel-title">종합현황</h3>
-          </div>
-          <div class="panel-body">
+
+
+      <div role="tabpanel" class="tab-pane" id="home"  data-ng-controller="AppCtrl">
+        <!-- 1st page -->
+        <div class="jumbotron">
+          <h2>SW플랫폼 연구팀 실시간 조사</h2>
+          <p class="lead">
+            맛있는거 먹을 시간입니다.
             <div class="row">
               <div class="col-md-6">
-                <div class="panel panel-info">
-                  <div class="panel-heading">
-                     출석현황
-                  </div>
-                  <div class="panel-body">
-                    <fusioncharts
-                        width="400"
-                        height="300"
-                        type="pie3d"
-                        datasource="{{myDataSource}}"
-                    ></fusioncharts>
+                <p>날짜 :&nbsp;<input type="text" ng-model="datePicker" datepicker />
+                </div>
+                <div class="col-md-6">
+                  <div class="input-group">
+                    <span class="input-group-addon" id="sizing-addon2">시간</span>
+                    <input type="text" class="form-control" placeholder="시간을 입력합니다" aria-describedby="sizing-addon2" value="19:00 장가네전골(야탑역 근처)">
                   </div>
                 </div>
               </div>
-              <div class="col-md-6">
-                <div class="panel panel-success">
-                  <div class="panel-heading">
-                     인기메뉴
+            </p>
+          </div>
+
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h3 class="panel-title">참석자 조사</h3>
+            </div>
+            <div class="panel-body">
+              <table class="table table-bordered">
+                <tr class="info">
+                  <td>
+                    이름
+                  </td>
+                  <td>
+                    참석여부
+                  </td>
+                </tr>
+                <tr data-ng-repeat="mem in members" data-ng-if="mem.selected != undefined">
+                  <td class="success">
+                    {{mem.name}}
+                  </td>
+                  <td>
+                    <input type="checkbox" data-ng-model="mem.selected">
+                  </td>
+                </tr>
+              </table>
+            </div>
+            <div class="panel-footer panel-primary">
+              <button class="btn btn-primary" type="button">
+                참석: <span class="badge">{{ selectedMembers }}</span>
+              </button>
+              <button class="btn btn-danger" type="button">
+                불참석: <span class="badge">{{ unselectedMembers }}</span>
+              </button>
+              <span style="float:right">
+                <button class="btn btn-info" data-ng-click="save()">저장</button>
+                <button class="btn btn-info" data-ng-click="clear()">리셋</button>
+              </span>
+            </div>
+          </div>
+        </div>
+        <!-- 2nd page -->
+        <div role="tabpanel" class="tab-pane" id="menuvote">
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h3 class="panel-title">회식 메뉴 선택</h3>
+            </div>
+            <div class="panel-body">
+              <form class="form-inline">
+                <input type="text" ng-model="foodname" ng-enter="addFoodMenu()"
+                class="form-control" id="foodmenu" placeholder="원하는 메뉴를 입력해주세요" style="width:40%">
+                <button type="button" class="btn btn-success" ng-click="addFoodMenu()">추가</button>
+              </form>
+              <div id="menulist">
+                <div ng-repeat="field in fields">
+                  <food-display></food-display>
+                </div>
+              </div>
+            </div>
+            <div class="panel-footer panel-primary" align="right">
+              <button class="btn btn-info " data-ng-click="saveList()">저장</button>
+              <!-- <button class="btn btn-danger " data-ng-click="resetList()" disabled="disabled">리셋</button> -->
+              <button class="btn btn-danger " data-ng-click="resetList()">리셋</button>
+            </div>
+          </div>
+        </div>
+        <!-- 3rd page -->
+        <div role="tabpanel" class="tab-pane" id="teamchat">
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h3 class="panel-title">팀 수다공간</h3>
+            </div>
+            <div class="panel-body" style="height:600px" id="chatSpace">
+              <div ng-repeat="chatcontent in chatcontents">
+                <div class="well">{{chatcontent.user}} : {{chatcontent.content}}
+                  &nbsp&nbsp&nbsp
+                  <button type="button" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>&nbsp Edit &nbsp</button>
+                  <button type="button" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>&nbsp Reply</button>
+                  <button type="button" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>&nbsp Delete</button>
+                </div>
+              </div>
+              <!-- <div ng-repeat="chatcontent in chatcontents">
+              <chat-log></chat-log>
+              </div> -->
+            </div>
+            <div class="panel-footer panel-primary" align="left">
+              <form class="form-inline">
+                <input type="text" class="form-control" ng-model="chatInput" placeholder="할 말을 입력하세요"  ng-enter="typeChatting()" style="width:80%">
+                <button type="button" class="btn btn-success" ng-click="typeChatting()">입력</button>
+              </form>
+            </div>
+          </div>
+        </div>
+        <!-- 5th page -->
+        <div role="tabpanel" class="tab-pane" id="notice">
+          <!-- 4 페이지
+          (1) Outline -> 1페이지 참석현황 그래프로 표시
+          2페이지 인기메뉴 그래프로 표시 -->
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h3 class="panel-title">종합현황</h3>
+            </div>
+            <div class="panel-body">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="panel panel-info">
+                    <div class="panel-heading">
+                      출석현황
+                    </div>
+                    <div class="panel-body">
+                      <fusioncharts
+                      width="400"
+                      height="300"
+                      type="pie3d"
+                      datasource="{{myDataSource}}"
+                      ></fusioncharts>
+                    </div>
                   </div>
-                  <div class="panel-body">
-                    <div fusioncharts
-                        width="400"
-                        height="300"
-                        type="column2d"
-                        datasource="{{dataSource}}"
-                        ></div>
-                    <p><a class="btn btn-default" ng-click="updateMyChartData()">Click me to change data</a></p>
+                </div>
+                <div class="col-md-6">
+                  <div class="panel panel-success">
+                    <div class="panel-heading">
+                      인기메뉴
+                    </div>
+                    <div class="panel-body">
+                      <div fusioncharts
+                      width="400"
+                      height="300"
+                      type="column2d"
+                      datasource="{{dataSource}}"
+                      ></div>
+                      <p><a class="btn btn-default" ng-click="updateMyChartData()">Click me to change data</a></p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -214,22 +516,22 @@
           </div>
         </div>
       </div>
-		</div>
 
-		<footer class="footer clearfix">
-			<p>&copy; Posco ICT R&D Center 2015</p>
-		</footer>
+      <footer class="footer clearfix">
+        <p>&copy; Developed by Melody, Josh</p>
+      </footer>
 
-	</div><!-- /container -->
-  <!-- Body end -->
-  <!-- <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
-  <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script> -->
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-  <script type="text/javascript" src="fusioncharts.js"></script>
-  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
-  <script type="text/javascript" src="angular-datepicker.js"></script>
-  <script type="text/javascript" src="angular-fusioncharts.min.js"></script>
-  <script type="text/javascript" src="angular-resource.min.js"></script>
-  <script type="text/javascript" src="controllers/controller.js"></script>
-</body>
-</html>
+    </div><!-- /container -->
+    <script type="text/javascript" src="js/bootstrap/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/fusionchart/fusioncharts.js"></script>
+    <script type="text/javascript" src="js/angular/angular.min.js"></script>
+    <script type="text/javascript" src="js/angular/angular-datepicker.js"></script>
+    <script type="text/javascript" src="js/angular/angular-fusioncharts.min.js"></script>
+    <script type="text/javascript" src="js/angular/angular-resource.min.js"></script>
+    <script type="text/javascript" src="js/angular/angular-datatables.min.js"></script>
+    <script type="text/javascript" src="js/datatable/datatables.min.js"></script>
+    <script type="text/javascript" src="js/datatable/dataTables.bootstrap.min.js"></script>
+    <script type="text/javascript" src="controllers/controller.js"></script>
+    <script type="text/javascript" src="controllers/whopperController.js"></script>
+  </body>
+  </html>
