@@ -1,0 +1,26 @@
+/*.justified {
+position:relative;
+left:40%;
+margin-bottom: 1px;
+}*/
+
+nav {
+  float:none;
+  margin: 0 auto;
+  display: table;
+  table-layout: fixed;
+  margin-bottom: 1px;
+}
+
+.form-group {
+  margin-bottom: 100px;
+}
+
+/*.nav .nav-pills {
+display: inline-block;
+float: none;
+}
+
+.nav .nav-pills {
+text-align: center;
+}*/

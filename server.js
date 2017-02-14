@@ -4,17 +4,30 @@ var mongojs = require('mongojs');
 
 var db = mongojs('members', ['members']);
 var fooddb = mongojs('foodmenu', ['foodmenu']);
-var datedb = mongojs('gatheringdate',['gatheringdate']);
-var techsupportdb = mongojs('techsupport', ['contents']);  // mongojs('db name', ['collection name']);
+var datedb = mongojs('gatheringdate', ['gatheringdate']);
+var techsupportdb = mongojs('techsupport', ['contents']); // mongojs('db name', ['collection name']);
 
 var bodyParser = require('body-parser');
 
-app.use(express.static(__dirname + "/public"));
+// team member events
+var path = require('path');
+var events = require('./events');
+
+// view engine setup
+// app.set('views', path.join(__dirname, 'client'));
+app.set('views', path.join(__dirname));
+app.set('view engine', 'ejs');
+app.engine('html', require('ejs').renderFile);
+
+// app.use(express.static(__dirname + "/source"));
+app.use(express.static(__dirname));
 app.use(bodyParser.json());
-app.get("/vote", function (req, res){
+app.use('/events/', events);
+
+app.get("/vote", function(req, res) {
   console.log("I received a GET request");
 
-  db.members.find(function (err,docs) {
+  db.members.find(function(err, docs) {
     res.json(docs);
   });
 });
@@ -30,48 +43,66 @@ app.put('/vote/', function(req, res) {
   var i = 0;
   members.forEach(function(data) {
     i++;
-    console.log(" @before update"+i+ " : "+data.selected + ", " +data.name);
-    db.members.update(
-      { "name" : data.name },
-      {$set: {"name" : data.name, "selected" : data.selected}}, function(err, doc){
-        // console.log(doc);
-      });
+    console.log(" @before update" + i + " : " + data.selected + ", " + data.name);
+    db.members.update({
+      "name": data.name
+    }, {
+      $set: {
+        "name": data.name,
+        "selected": data.selected
+      }
+    }, function(err, doc) {
+      // console.log(doc);
+    });
   });
   // db.members.update(
   //   { "selectedmembers" : selectedmembers },
   //   {$set: {"selectedmembers" : selectedmembers, "unselectedmembers" : unselectedmembers}}, function(err, doc){
   //     console.log(doc);
   //   });
-  console.log(" @after update : ",members);
+  console.log(" @after update : ", members);
   // res.json(members, selectedmembers, unselectedmembers);
   res.json(members);
 });
 
-app.put('/vote/clear', function(req, res){
+app.put('/vote/clear', function(req, res) {
   var members = req.body.members;
 
-  db.members.update(
-    { "name" : {$nin:[null]} },
-    {$set: {selected : false}},
-    {multi: true}, function(err, doc){
-      // console.log(doc);
-    });
+  db.members.update({
+    "name": {
+      $nin: [null]
+    }
+  }, {
+    $set: {
+      selected: false
+    }
+  }, {
+    multi: true
+  }, function(err, doc) {
+    // console.log(doc);
+  });
   res.json(members);
 });
 
-app.put("/date", function (req, res){
+app.put("/date", function(req, res) {
   console.log("I received a PUT request for Gathering Date");
   // console.log("request : ", typeof req.body);
 
-  datedb.gatheringdate.update(
-      {"name": "setDate"},
-      {$set: {"name":"setDate", "date" : req.body}}, function(err, doc){
-    });
+  datedb.gatheringdate.update({
+    "name": "setDate"
+  }, {
+    $set: {
+      "name": "setDate",
+      "date": req.body
+    }
+  }, function(err, doc) {});
 });
 
-app.get("/date", function(req,res) {
+app.get("/date", function(req, res) {
   console.log("I received a GET request for Gathering Date");
-  datedb.gatheringdate.find({ "name": "setDate" }, function (err,docs) {
+  datedb.gatheringdate.find({
+    "name": "setDate"
+  }, function(err, docs) {
     res.json(docs);
   });
 });
@@ -79,7 +110,7 @@ app.get("/date", function(req,res) {
 // foodmenu
 app.get('/foodmenu', function(req, res) {
   // console.log("I received a Food GET request");
-  fooddb.foodmenu.find(function (err,docs) {
+  fooddb.foodmenu.find(function(err, docs) {
     res.json(docs);
   });
 });
@@ -87,7 +118,7 @@ app.get('/foodmenu', function(req, res) {
 app.post('/foodmenu/', function(req, res) {
   console.log(req.body);
   fooddb.foodmenu.insert(req.body, function(err, docs) {
-    res.json("post mehthod sucess : ",docs);
+    res.json("post mehthod sucess : ", docs);
   });
 });
 
@@ -97,17 +128,23 @@ app.put('/foodmenu/', function(req, res) {
 
   foodlist.forEach(function(data) {
     // console.log(" @before update : "+data.name + ", " + data.checkedNum + ", " +data.count);
-    fooddb.foodmenu.update(
-      { "name" : data.name },
-      {$set: {"name" : data.name, "checkedNum" : data.checkedNum, "count" : data.count}}, function(err, doc){
-        // console.log(" i 번째 데이터 : ",doc);
-      });
+    fooddb.foodmenu.update({
+      "name": data.name
+    }, {
+      $set: {
+        "name": data.name,
+        "checkedNum": data.checkedNum,
+        "count": data.count
+      }
+    }, function(err, doc) {
+      // console.log(" i 번째 데이터 : ",doc);
+    });
   });
 });
 
 app.delete('/foodmenu/', function(req, res) {
-  fooddb.foodmenu.remove(function (err,docs) {
-      res.json(docs);
+  fooddb.foodmenu.remove(function(err, docs) {
+    res.json(docs);
   });
 });
 
@@ -128,36 +165,38 @@ app.get('/techsupport', function(req, res) {
 
 app.put('/techsupport/', function(req, res) {
 
-	var id = { _id: db.ObjectId(req.body.support_id) };
+  var id = {
+    _id: db.ObjectId(req.body.support_id)
+  };
 
-   console.log("DBid DELETE server.js : " , id);
+  console.log("DBid DELETE server.js : ", id);
 
-	 techsupportdb.contents.remove( id, function(err, docs){
-        if(err){
-            console.log("Error to remove" + err);
-        }
-        else{
-            console.log("Removed");
-        }
-        res.json(docs);
-    });
+  techsupportdb.contents.remove(id, function(err, docs) {
+    if (err) {
+      console.log("Error to remove" + err);
+    } else {
+      console.log("Removed");
+    }
+    res.json(docs);
+  });
 });
 
 app.put('/techsupport/update', function(req, res) {
 
-	var id = {_id: db.ObjectId(req.body.support_id) } ;
+  var id = {
+    _id: db.ObjectId(req.body.support_id)
+  };
 
-	console.log("DBid UPDATE server.js : " , id, req.body);
+  console.log("DBid UPDATE server.js : ", id, req.body);
 
-    techsupportdb.contents.update( id, req.body, function(err, docs){
-        if(err){
-            console.log("Error to update" + err);
-        }
-        else{
-            console.log("Updated " , id);
-        }
-        res.json(docs);
-    });
+  techsupportdb.contents.update(id, req.body, function(err, docs) {
+    if (err) {
+      console.log("Error to update" + err);
+    } else {
+      console.log("Updated ", id);
+    }
+    res.json(docs);
+  });
 });
 
 app.listen(3000);

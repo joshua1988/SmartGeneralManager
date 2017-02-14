@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ko" data-ng-app="eventApp">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SW 플랫폼 생일자</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link rel="stylesheet" href="source/css/vendor/angular-datepicker.css">
+  <style>
+  body {
+    min-height: 2000px;
+    padding-top: 70px;
+  }
+  </style>
+</head>
+<body data-ng-controller="EventCtrl as wc">
+  <!-- Fixed navbar -->
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">SW 플랫폼</a>
+      </div>
+      <div id="navbar" class="navbar-collapse collapse">
+        <ul class="nav navbar-nav nav-tabs" id="myTabs">
+          <li role="presentation" class="active"><a href="#home" role="tab" data-toggle="tab">정산 내역</a></li>
+          <li role="presentation" ><a href="#deposit" role="tab" data-toggle="tab">입금 내역</a></li>
+          <li role="presentation" ><a href="#calendar" role="tab" data-toggle="tab">생일자 달력</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Tab panes -->
+  <div class="tab-content">
+    <!-- main page -->
+    <div role="tabpanel" class="container tab-pane active" id="home">
+      <h1>생일자 공동회비 지출 내역</h1>
+      <form class="form-inline">
+        <div class="form-group">
+          <div class="input-group">
+            <div class="input-group-addon">사용 날짜</div>
+            <datepicker>
+              <input type="text" class="form-control" ng-model="date" id="paymentDate" placeholder="">
+            </datepicker>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="sr-only" for="exampleInputAmount">Amount (in dollars)</label>
+          <div class="input-group">
+            <div class="input-group-addon">생일자</div>
+            <input type="text" class="form-control" ng-model="expenseFormData.birthday_name" id="exampleInputAmount" placeholder="이름">
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="input-group">
+            <div class="input-group-addon">사용 금액</div>
+            <input type="text" class="form-control" ng-model="expenseFormData.expense_amount" id="exampleInputAmount" placeholder="원">
+          </div>
+          <button type="submit" class="btn btn-primary" ng-click="submitExpenseForm()">입력</button>
+        </div>
+      </form>
+      <br>
+
+      <div class="panel panel-default">
+        <div class="panel-heading">지출 내역</div>
+        <div class="panel-body">
+          <dl class="dl-horizontal" ng-repeat="day in days">
+            <dt>{{day.birthday_name}}</dt>
+            <dd>사용 : {{day.expense_amount}} 원 <button class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove"></span></button><br /> 잔액 : 20,200 원</dd>
+          </dl>
+        </div>
+      </div>
+
+      <!-- <p class="lead">Use this document as a way to quickly start any new project.<br> All you get is this text and a mostly barebones HTML document.</p> -->
+    </div>
+    <!-- 2nd page -->
+    <div role="tabpanel" class="container tab-pane" id="deposit">
+      <h1>생일자 공동회비 입금 내역</h1>
+      <form class="form-inline">
+        <div class="form-group">
+          <label class="sr-only" for="exampleInputAmount">Amount (in dollars)</label>
+          <div class="input-group">
+            <div class="input-group-addon">회차</div>
+            <input type="text" class="form-control" ng-model="depositFormData.sequence" id="exampleInputAmount" placeholder="횟수">
+          </div>
+          <a class="btn btn-success" role="button" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+            <span class="glyphicon glyphicon-plus"></span> 추가
+          </a>
+          <div class="collapse" id="collapseExample">
+            <div class="well">
+              <div class="input-group">
+                <div class="input-group-addon">이름</div>
+                <input type="text" class="form-control" ng-model="depositFormData.name" id="exampleInputAmount" placeholder="입금자 명">
+              </div>
+              <div class="input-group">
+                <div class="input-group-addon">금액</div>
+                <input type="text" class="form-control" ng-model="depositFormData.amount" id="exampleInputAmount" placeholder="원">
+              </div>
+              <button type="submit" class="btn btn-primary">입력</button>
+            </div>
+          </div>
+        </div>
+      </form>
+      <br />
+      <div class="panel panel-default">
+        <div class="panel-heading">? 회차 입금 내역</div>
+        <div class="panel-body">
+          현재 잔액 : 30,300 원 <button class="btn btn-success btn-xs"><span class="glyphicon glyphicon-edit"></span></button>
+          <!-- 현재 잔액 : <span></span> 원 -->
+          <br>
+          입금자 목록
+          <ul>
+            <li>1</li>
+            <li>2</li>
+            <li>3</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <!-- 3rd page -->
+    <div role="tabpanel" class="container tab-pane" id="calendar">
+
+    </div>
+  </div>
+
+
+
+
+  <!-- <a class="btn btn-primary" role="button" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+    <span class="glyphicon glyphicon-plus"></span> 생일자 추가
+  </a>
+  <div class="collapse" id="collapseExample">
+  </div> -->
+
+  <!-- <div class="container">
+    <div class="input-group">
+      <div class="input-group-addon">입금</div>
+      <input type="text" class="form-control" id="exampleInputAmount" placeholder="원">
+    </div>
+  </div> -->
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  <script src="source/js/vendor/angular/angular.min.js"></script>
+  <script src="source/js/vendor/angular/angular-datepicker.min.js"></script>
+  <script src="source/js/vendor/angular/angular-resource.min.js"></script>
+  <script src="source/js/controllers/eventController.js"></script>
+  <script>
+    $('#myTabs a').click(function (e) {
+      e.preventDefault()
+      $(this).tab('show')
+    });
+
+    $(function() {
+      $(document).ready(function() {
+
+        // $("#paymentDate").datepicker();
+      });
+    });
+
+    // 
+  </script>
+</body>
+</html>
