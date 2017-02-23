@@ -46,8 +46,8 @@
         <div class="form-group">
           <div class="input-group">
             <div class="input-group-addon">사용 날짜</div>
-            <datepicker>
-              <input type="text" class="form-control" ng-model="date" id="paymentDate" placeholder="">
+            <datepicker date-format="yyyy-MM-dd">
+              <input type="text" class="form-control" ng-model="expenseFormData.expense_date" id="paymentDate" placeholder="">
             </datepicker>
           </div>
         </div>
@@ -64,6 +64,7 @@
             <input type="text" class="form-control" ng-model="expenseFormData.expense_amount" id="exampleInputAmount" placeholder="원">
           </div>
           <button type="submit" class="btn btn-primary" ng-click="submitExpenseForm()">입력</button>
+          <button type="submit" class="btn btn-primary" ng-click="getBalance()">테스트</button>
         </div>
       </form>
       <br>
@@ -72,8 +73,8 @@
         <div class="panel-heading">지출 내역</div>
         <div class="panel-body">
           <dl class="dl-horizontal" ng-repeat="day in days">
-            <dt>{{day.birthday_name}}</dt>
-            <dd>사용 : {{day.expense_amount}} 원 <button class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove"></span></button><br /> 잔액 : 20,200 원</dd>
+            <dt>{{day.expense_date}} | {{day.birthday_name}}</dt><span hidden>{{day._id}}</span>
+            <dd>사용 : {{day.expense_amount}} 원<button class="btn btn-danger btn-xs" ng-click="removeExpense($index)"><span class="glyphicon glyphicon-remove"></span></button><br /> 잔액 : 20,200 원</dd>
           </dl>
         </div>
       </div>
@@ -165,7 +166,7 @@
       });
     });
 
-    // 
+    //
   </script>
 </body>
 </html>
