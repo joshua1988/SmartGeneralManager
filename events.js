@@ -12,15 +12,15 @@ router.get('/', function(req, res, next) {
     res.render('event.html');
 });
 
-router.get("/deposit", function(req, res) {
-  // res.send("deposit GET API");
+router.get("/expense", function(req, res) {
+  // res.send("expense GET API");
 
   expense.expenseDB.find(function(err, docs) {
     res.json(docs);
   });
 });
 
-router.post("/deposit", function(req, res) {
+router.post("/expense", function(req, res) {
   // console.log("received POST data : ", req.body);
 
   expense.expenseDB.insert(req.body, function(err, docs) {
@@ -28,7 +28,7 @@ router.post("/deposit", function(req, res) {
   });
 });
 
-router.post("/deposit/remove", function(req, res) {
+router.post("/expense/remove", function(req, res) {
 
   console.log("req : ", req.body);
   expense.expenseDB.remove({

@@ -3,9 +3,10 @@ var eventApp = angular.module('eventApp', ["ngResource", "720kb.datepicker"]);
 eventApp.controller("EventCtrl", ['$scope', '$http', function($scope, $http){
 
   $scope.balance = 0;
+  $scope.deleteWhat = {};
 
-  var refreshExpense = function() {
-    $http.get('events/deposit').success(function(response, data, status, headers, config) {
+  var refreshExpenseList = function() {
+    $http.get('events/expense').success(function(response, data, status, headers, config) {
       // console.log("I got the data I requested ");
 
       $scope.days = response;
@@ -14,27 +15,18 @@ eventApp.controller("EventCtrl", ['$scope', '$http', function($scope, $http){
     });
   };
 
-  var countBalance = function (input, balance) {
-    // console.log("input : " + input + ". type is :" + typeof input);
-    // console.log("balance : " + balance + ". type is :" + typeof balance);
-    balance = parseInt(balance);
-    input = parseInt(input);
-    balance += input;
-    return balance;
-  };
-
   var getBalance = function () {
     $http.get('events/balance').success(function(response, data, status, headers, config) {
-      // console.log("getBalance() : ", response);
+      console.log("getBalance() : ", response);
 
-      $scope.balance = response;
+      $scope.balance = parseInt(response);
     }).error(function(data, status, headers, config) {
       console.log("expense error : ", status);
     });
   };
 
   var updateBalance = function () {
-    $http.post('events/balance').success(function(response, data, status, headers, config) {
+    $http.post('events/balance', "130000").success(function(response, data, status, headers, config) {
       console.log("I got the data I requested ");
 
       $scope.days = response;
@@ -43,7 +35,12 @@ eventApp.controller("EventCtrl", ['$scope', '$http', function($scope, $http){
       console.log("expense error : ", status);
     });
   };
-  refreshExpense();
+
+  var countBalance = function (balance, input) {
+    return balance + parseInt(input);
+  };
+
+  refreshExpenseList();
   getBalance();
 
   $scope.expenseFormData = {
@@ -52,35 +49,50 @@ eventApp.controller("EventCtrl", ['$scope', '$http', function($scope, $http){
     expense_amount : ""
   };
 
-  $scope.depositFormData = {
-    sequence : "1",
-    name : "입금자는 박보검",
-    amount : "10,000"
-  };
-
   $scope.days = [];
 
-  $scope.submitExpenseForm = function() {
-    $http.post('events/deposit', $scope.expenseFormData).success(function(response, data, status, headers, config) {
-      // console.log("Data has been posted");
-
-      console.log("countBalance() :" + countBalance($scope.expenseFormData.expense_amount, $scope.balance));
-      refreshExpense();
+  $scope.addExpense = function() {
+    $http.post('events/expense', $scope.expenseFormData).success(function(response, data, status, headers, config) {
+      $scope.balance = countBalance($scope.balance, $scope.expenseFormData.expense_amount);
+      refreshExpenseList();
       $scope.expenseFormData = null;
     }).error(function(data, status, headers, config) {
       console.log("expense error : ", status);
     });
   };
 
-  $scope.removeExpense = function(item) {
-    console.log($scope.days[item]);
+  $scope.removeExpense = function() {
+    // console.log("what to delete? ", $scope.deleteWhat);
 
-    $http.post('events/deposit/remove', $scope.days[item]).success(function(response, data, status, headers, config) {
+    $http.post('events/expense/remove', $scope.deleteWhat).success(function(response, data, status, headers, config) {
       console.log("response : ", response);
-      refreshExpense();
+      refreshExpenseList();
     }).error(function(data, status, headers, config) {
       console.log("expense error : ", status);
     });
+
+    $('#myModal').modal('toggle');
   };
+
+  $scope.keepIndex = function (item) {
+    $scope.deleteWhat = $scope.days[item];
+    console.log($scope.deleteWhat);
+  };
+
+  // Deposit Controller
+  $scope.deposits = [];
+  $scope.deposit = {
+    sequence : "1",
+    account_holder : "입금자는 박보검",
+    deposit_amount : "10,000"
+  };
+
+  $scope.depositFormData = {
+    sequence : "1",
+    name : "입금자는 박보검",
+    amount : "10,000"
+  };
+
+
 
 }]);
