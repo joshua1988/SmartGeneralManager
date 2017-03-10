@@ -9,7 +9,7 @@ eventApp.controller("EventCtrl", ['$scope', '$http', function($scope, $http){
     $http.get('events/expense').success(function(response, data, status, headers, config) {
       // console.log("I got the data I requested ");
 
-      $scope.days = response;
+      $scope.expenses = response;
     }).error(function(data, status, headers, config) {
       console.log("expense error : ", status);
     });
@@ -29,7 +29,7 @@ eventApp.controller("EventCtrl", ['$scope', '$http', function($scope, $http){
     $http.post('events/balance', "130000").success(function(response, data, status, headers, config) {
       console.log("I got the data I requested ");
 
-      $scope.days = response;
+      $scope.expenses = response;
       console.log("res : ", response);
     }).error(function(data, status, headers, config) {
       console.log("expense error : ", status);
@@ -43,17 +43,19 @@ eventApp.controller("EventCtrl", ['$scope', '$http', function($scope, $http){
   refreshExpenseList();
   getBalance();
 
+  $scope.expenses = [];
   $scope.expenseFormData = {
     expense_date : "",
     birthday_name : "",
-    expense_amount : ""
+    expense_amount : 0,
+    expense_balance: 0
   };
 
-  $scope.days = [];
-
   $scope.addExpense = function() {
+    $scope.balance = countBalance($scope.balance, -$scope.expenseFormData.expense_amount);
+    $scope.expenseFormData.expense_balance = $scope.balance;
+
     $http.post('events/expense', $scope.expenseFormData).success(function(response, data, status, headers, config) {
-      $scope.balance = countBalance($scope.balance, $scope.expenseFormData.expense_amount);
       refreshExpenseList();
       $scope.expenseFormData = null;
     }).error(function(data, status, headers, config) {
@@ -75,24 +77,42 @@ eventApp.controller("EventCtrl", ['$scope', '$http', function($scope, $http){
   };
 
   $scope.keepIndex = function (item) {
-    $scope.deleteWhat = $scope.days[item];
+    $scope.deleteWhat = $scope.expenses[item];
     console.log($scope.deleteWhat);
   };
 
   // Deposit Controller
   $scope.deposits = [];
-  $scope.deposit = {
-    sequence : "1",
-    account_holder : "입금자는 박보검",
-    deposit_amount : "10,000"
-  };
-
   $scope.depositFormData = {
-    sequence : "1",
-    name : "입금자는 박보검",
-    amount : "10,000"
+    sequence : "",
+    deposit_list : [],
+    deposit_amount : "10000"
   };
 
+  var refreshDepositList = function() {
+    $http.get('events/deposit').success(function(response, data, status, headers, config) {
+      // console.log("I got the data I requested ");
 
+      $scope.deposits = response;
+    }).error(function(data, status, headers, config) {
+      console.log("get deposit error : ", status);
+    });
+  };
+  refreshDepositList();
+
+  $scope.addDeposit = function () {
+    $scope.balance = countBalance($scope.balance, $scope.depositFormData.deposit_amount);
+    console.log("balance after deposit : ", $scope.balance);
+    console.log("depositFormData : ", $scope.depositFormData);
+    console.log("account_holder : ", $scope.depositFormData.account_holder);
+    // $scope.depositFormData.deposit_list.account_holder.push()
+
+    $http.post('events/deposit', $scope.depositFormData).success(function(response, data, status, headers, config) {
+      $scope.depositFormData = null;
+      refreshDepositList();
+    }).error(function(data, status, headers, config) {
+      console.log("add deposit error : ", status);
+    });
+  };
 
 }]);

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+```<!DOCTYPE html>
 <html lang="ko" data-ng-app="eventApp">
 <head>
   <meta charset="UTF-8">
@@ -72,10 +72,12 @@
       <div class="panel panel-default">
         <div class="panel-heading">지출 내역</div>
         <div class="panel-body">
-          <dl class="dl-horizontal" ng-repeat="day in days">
-            <dt>{{day.expense_date}} | {{day.birthday_name}}</dt><span hidden>{{day._id}}</span>
-            <dd>사용 : {{day.expense_amount}} 원
-            <button class="btn btn-danger btn-xs" data-toggle="modal" data-target="#myModal" ng-click="keepIndex($index)"><span class="glyphicon glyphicon-remove"></span></button><br /> 잔액 : {{balance}}</dd>
+          <dl class="dl-horizontal" ng-repeat="expense in expenses">
+            <dt>{{expense.expense_date}} | {{expense.birthday_name}}</dt><span hidden>{{expense._id}}</span>
+            <dd>사용 : {{expense.expense_amount}} 원
+            <button class="btn btn-danger btn-xs" data-toggle="modal" data-target="#myModal" ng-click="keepIndex($index)">
+              <span class="glyphicon glyphicon-remove"></span>
+            </button><br> 잔액 : {{expense.expense_balance}}</dd>
           </dl>
         </div>
       </div>
@@ -99,7 +101,7 @@
         </div>
       </div>
 
-      <!-- <p class="lead">Use this document as a way to quickly start any new project.<br> All you get is this text and a mostly barebones HTML document.</p> -->
+    <!-- <p class="lead">Use this document as a way to quickly start any new project.<br> All you get is this text and a mostly barebones HTML document.</p> -->
     </div>
     <!-- 2nd page -->
     <div role="tabpanel" class="container tab-pane" id="deposit">
@@ -118,27 +120,26 @@
             <div class="well">
               <div class="input-group">
                 <div class="input-group-addon">이름</div>
-                <input type="text" class="form-control" ng-model="depositFormData.name" id="exampleInputAmount" placeholder="입금자 명">
+                <input type="text" class="form-control" ng-model="depositFormData.account_holder" id="exampleInputAmount" placeholder="입금자 명">
               </div>
-              <div class="input-group">
+              <!-- <div class="input-group">
                 <div class="input-group-addon">금액</div>
-                <input type="text" class="form-control" ng-model="depositFormData.amount" id="exampleInputAmount" placeholder="원">
-              </div>
-              <button type="submit" class="btn btn-primary">입력</button>
+                <input type="text" class="form-control" ng-model="depositFormData.deposit_amount" id="exampleInputAmount" placeholder="원">
+              </div> -->
+              <button type="submit" class="btn btn-primary" ng-click="addDeposit()">입력</button>
             </div>
           </div>
         </div>
       </form>
       <br />
-      <!-- <div class="panel panel-default" ng-repeat="deposit in deposits"> -->
-      <div class="panel panel-default">
-        <div class="panel-heading">{{deposit.squence}} 회차 입금 내역</div>
+      <div class="panel panel-default" ng-repeat="deposit in deposits">
+        <div class="panel-heading">{{deposit.sequence}} 회차 입금 내역</div>
         <div class="panel-body">
           현재 잔액 : 30,300 원 <button class="btn btn-success btn-xs"><span class="glyphicon glyphicon-edit"></span></button>
           <br>
           입금자 목록
-          <ul>
-            <li>{{deposit.account_holder}}</li>
+          <ul ng-repeat="account_holder in deposit.deposit_list">
+            <li>{{account_holder}}</li>
           </ul>
         </div>
       </div>

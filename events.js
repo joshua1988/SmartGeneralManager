@@ -4,9 +4,9 @@ var router = express.Router();
 // DB
 var mongojs = require('mongojs');
 var ObjectId = require('mongojs').ObjectId;
+var balance = mongojs('birthday', ['balanceDB']);
 var expense = mongojs('birthday', ['expenseDB']);
 var deposit = mongojs('birthday', ['depositDB']);
-var balance = mongojs('birthday', ['balanceDB']);
 
 router.get('/', function(req, res, next) {
     res.render('event.html');
@@ -55,6 +55,32 @@ router.post("/balance", function(req, res) {
   }, function(err, docs) {
     console.log(docs);
   });
+});
+
+router.get("/deposit", function(req, res) {
+  deposit.depositDB.find(function(err, docs) {
+    res.json(docs);
+  });
+});
+
+router.post("/deposit", function(req, res) {
+  console.log(req.body.account_holder);
+
+  deposit.depositDB.update({
+    "sequence" : req.body.sequence
+  }, {
+    $push : {
+      "deposit_list.account_holder" : req.body.account_holder
+    }
+  }, {
+    upsert: true
+  }, function(err, docs) {
+    res.json(docs);
+
+    // console.log(docs);
+    // console.log(err);
+  });
+
 });
 
 module.exports = router;
