@@ -135,11 +135,11 @@
       <div class="panel panel-default" ng-repeat="deposit in deposits">
         <div class="panel-heading">{{deposit.sequence}} 회차 입금 내역</div>
         <div class="panel-body">
-          현재 잔액 : 30,300 원 <button class="btn btn-success btn-xs"><span class="glyphicon glyphicon-edit"></span></button>
+          현재 잔액 : 30,300 원 <button class="btn btn-success btn-sm"><span class="glyphicon glyphicon-edit"></span></button>
           <br>
-          입금자 목록
-          <ul ng-repeat="account_holder in deposit.deposit_list">
-            <li>{{account_holder}}</li>
+          <h5>입금자 목록</h5>
+          <ul ng-repeat="n in deposit.deposit_list.account_holder">
+            <li>{{n}}</li>
           </ul>
         </div>
       </div>
